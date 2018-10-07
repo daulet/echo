@@ -14,27 +14,31 @@ func Run(port int) {
 		log.Fatalf("Listen(%v): %v", address, err)
 	}
 
+	var channelID int
 	for {
 		conn, err := l.Accept()
 		if err != nil {
 			log.Fatalf("Accept(): %v", err)
 		}
-		go handle(conn)
+		go handle(channelID, conn)
+		channelID++
 	}
 }
 
-func handle(conn net.Conn) {
+func handle(id int, conn net.Conn) {
 	defer conn.Close()
 
 	for {
 		var buf [128]byte
 		n, err := conn.Read(buf[:])
 		if err != nil {
-			log.Printf("Read() failed with: %v\n", err)
+			log.Printf("channel %v: Read() failed with: %v\n", id, err)
+			return
 		}
+		log.Printf("channel %v: %v", id, string(buf[:n]))
 		_, err = conn.Write([]byte(fmt.Sprintf("read %v bytes\n", n)))
 		if err != nil {
-			log.Printf("Write() failed with: %v\n", err)
+			log.Printf("channel %v: Write() failed with: %v\n", id, err)
 		}
 	}
 }
