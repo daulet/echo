@@ -32,7 +32,7 @@ func handle(id int, conn net.Conn) {
 		var buf [128]byte
 		n, err := conn.Read(buf[:])
 		if err != nil {
-			log.Printf("channel %v: Read() failed with: %v\n", id, err)
+			log.Printf("channel %v: finished with: %v\n", id, err)
 			return
 		}
 		log.Printf("channel %v: %v", id, string(buf[:n]))
