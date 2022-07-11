@@ -2,6 +2,7 @@ package punchbag
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"net"
 )
@@ -28,17 +29,11 @@ func Run(port int) {
 func handle(id int, conn net.Conn) {
 	defer conn.Close()
 
-	for {
-		var buf [128]byte
-		n, err := conn.Read(buf[:])
-		if err != nil {
-			log.Printf("channel %v: finished with: %v\n", id, err)
-			return
-		}
-		log.Printf("channel %v: %v", id, string(buf[:n]))
-		_, err = conn.Write([]byte(fmt.Sprintf("read %v bytes\n", n)))
-		if err != nil {
-			log.Printf("channel %v: Write() failed with: %v\n", id, err)
-		}
+	// TODO this might be suboptimal when there is nothing to write
+	// add sleep to avoid busy loop
+	_, err := io.Copy(conn, conn)
+	if err != nil {
+		log.Printf("channel %v: finished with: %v\n", id, err)
+		return
 	}
 }
