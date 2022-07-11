@@ -1,4 +1,4 @@
-package punchbag
+package echo
 
 import (
 	"fmt"
