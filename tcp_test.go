@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-const workers = 64
+var workers = 4 * runtime.NumCPU()
 
 func BenchmarkAdaptive(b *testing.B) {
 	// pushing this higher causes the benchmark not terminate
